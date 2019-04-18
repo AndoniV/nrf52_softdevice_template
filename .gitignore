@@ -1,0 +1,4 @@
+firmware/app/build
+firmware/nrf5_sdk/external/mbedtls/library
+.metadata
+RemoteSystemsTempFiles
