@@ -107,6 +107,7 @@ C_SOURCE_FILES += \
 		$(SRC_PATH)/main.c \
 		$(SRC_PATH)/ble/app_ble.c \
 		$(SRC_PATH)/app/app.c \
+		$(SRC_PATH)/hal/board.c \
 
 # Remove unwanted source files
 # C_SOURCE_FILES := $(filter-out $(SDK_PATH)/external/mbedtls/library/asn1write.c, $(C_SOURCE_FILES))

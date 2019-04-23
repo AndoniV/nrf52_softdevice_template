@@ -10,10 +10,9 @@
 #include "nrf_log_default_backends.h"
 #include "app_error.h"
 #include "app_timer.h"
-#include "app_gpiote.h"
-#include "app_button.h"
-#include "app/app.h"
+#include "hal/board.h"
 #include "ble/app_ble.h"
+#include "app/app.h"
 
 // DEFINITIONS ****************************************************************/
 
@@ -39,6 +38,8 @@ void app_run(void)
     nrf_result = app_timer_init();
     APP_ERROR_CHECK(nrf_result);
 
+    app_result = board_init();
+    APP_ERROR_CHECK((ret_code_t)app_result);
 	app_result = app_ble_init();
 	APP_ERROR_CHECK((ret_code_t)app_result);
 
