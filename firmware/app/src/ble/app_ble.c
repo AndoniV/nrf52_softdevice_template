@@ -40,8 +40,7 @@
 /** Number of attempts before giving up the connection parameter negotiation */
 #define APP_BLE_MAX_CONN_PARAMS_UPDATE_ATTEMPTS        (3)
 /** Memory block size for queued writes. This is larger than the maximum size
-    of the characteristic that will be sent (512) to handle overhead. It has
-    been chosen via trial-and-error using Gluecose */
+    of the characteristic that will be sent (512) to handle overhead. */
 #define APP_BLE_QUEUED_WRITE_MEM_BLOCK_SIZE            (604)
 
 // DECLARATIONS ***************************************************************/
@@ -135,7 +134,7 @@ static void app_ble_stack_init(void)
 static void app_ble_gap_init(void)
 {
 	ret_code_t nrf_result;
-	const uint8_t device_name[] = "ANDONI BLE TEST";
+	const uint8_t device_name[] = "NRF52 BLE TEST";
 
     ble_gap_conn_sec_mode_t sec_mode;
     BLE_GAP_CONN_SEC_MODE_SET_OPEN(&sec_mode);
