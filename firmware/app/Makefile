@@ -263,6 +263,13 @@ echosize:
 	$(NO_ECHO)$(SIZE) $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).out
 	-@echo ''
 
+# Flash SoftDevice
+.PHONY: flash_softdevice
+flash_softdevice:
+	@echo FLASHING SOFTDEVICE: s132_nrf52_6.1.0_softdevice.hex
+	nrfjprog --program $(SDK_PATH)/components/softdevice/s132/hex/s132_nrf52_6.1.0_softdevice.hex -f nrf52 --sectorerase
+	nrfjprog --reset -f nrf52
+
 # Flash firmware
 .PHONY: flash
 flash:
