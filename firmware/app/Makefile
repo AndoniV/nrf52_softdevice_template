@@ -49,12 +49,6 @@ remduplicates = $(strip $(if $1,$(firstword $1) $(call remduplicates,$(filter-ou
 # C source files
 C_SOURCE_FILES += \
 		$(SDK_PATH)/components/boards/boards.c \
-		$(SDK_PATH)/components/libraries/log/src/nrf_log_frontend.c \
-		$(SDK_PATH)/components/libraries/log/src/nrf_log_str_formatter.c \
-		$(SDK_PATH)/components/libraries/log/src/nrf_log_default_backends.c \
-		$(SDK_PATH)/components/libraries/log/src/nrf_log_backend_rtt.c \
-		$(SDK_PATH)/components/libraries/log/src/nrf_log_backend_serial.c \
-		$(SDK_PATH)/components/libraries/util/app_error.c \
 		$(SDK_PATH)/components/ble/common/ble_srv_common.c \
 		$(SDK_PATH)/components/ble/common/ble_advdata.c \
 		$(SDK_PATH)/components/ble/common/ble_conn_params.c \
@@ -72,22 +66,30 @@ C_SOURCE_FILES += \
 		$(SDK_PATH)/components/ble/peer_manager/gatts_cache_manager.c \
 		$(SDK_PATH)/components/ble/peer_manager/peer_id.c \
 		$(SDK_PATH)/components/ble/peer_manager/pm_buffer.c \
-		$(SDK_PATH)/components/libraries/util/app_error_handler_gcc.c \
-		$(SDK_PATH)/components/libraries/util/app_error_weak.c \
-		$(SDK_PATH)/components/libraries/util/app_util_platform.c \
-		$(SDK_PATH)/components/libraries/util/nrf_assert.c \
 		$(SDK_PATH)/components/libraries/atomic/nrf_atomic.c \
 		$(SDK_PATH)/components/libraries/atomic_flags/nrf_atflags.c \
 		$(SDK_PATH)/components/libraries/atomic_fifo/nrf_atfifo.c \
 		$(SDK_PATH)/components/libraries/balloc/nrf_balloc.c \
-		$(SDK_PATH)/components/libraries/timer/app_timer.c \
+		$(SDK_PATH)/components/libraries/button/app_button.c \
+		$(SDK_PATH)/components/libraries/experimental_section_vars/nrf_section_iter.c \
 		$(SDK_PATH)/components/libraries/fds/fds.c \
+		$(SDK_PATH)/components/libraries/gpiote/app_gpiote.c \
 		$(SDK_PATH)/components/libraries/fstorage/nrf_fstorage.c \
 		$(SDK_PATH)/components/libraries/fstorage/nrf_fstorage_sd.c \
+		$(SDK_PATH)/components/libraries/log/src/nrf_log_frontend.c \
+		$(SDK_PATH)/components/libraries/log/src/nrf_log_str_formatter.c \
+		$(SDK_PATH)/components/libraries/log/src/nrf_log_default_backends.c \
+		$(SDK_PATH)/components/libraries/log/src/nrf_log_backend_rtt.c \
+		$(SDK_PATH)/components/libraries/log/src/nrf_log_backend_serial.c \
+		$(SDK_PATH)/components/libraries/util/app_error.c \
 		$(SDK_PATH)/components/libraries/memobj/nrf_memobj.c \
-		$(SDK_PATH)/components/libraries/ringbuf/nrf_ringbuf.c \
 		$(SDK_PATH)/components/libraries/strerror/nrf_strerror.c \
-		$(SDK_PATH)/components/libraries/experimental_section_vars/nrf_section_iter.c \
+		$(SDK_PATH)/components/libraries/timer/app_timer.c \
+		$(SDK_PATH)/components/libraries/ringbuf/nrf_ringbuf.c \
+		$(SDK_PATH)/components/libraries/util/app_error_handler_gcc.c \
+		$(SDK_PATH)/components/libraries/util/app_error_weak.c \
+		$(SDK_PATH)/components/libraries/util/app_util_platform.c \
+		$(SDK_PATH)/components/libraries/util/nrf_assert.c \
 		$(SDK_PATH)/components/softdevice/common/nrf_sdh.c \
 		$(SDK_PATH)/components/softdevice/common/nrf_sdh_ble.c \
 		$(SDK_PATH)/external/fprintf/nrf_fprintf_format.c \
@@ -96,6 +98,7 @@ C_SOURCE_FILES += \
 		$(SDK_PATH)/external/segger_rtt/SEGGER_RTT_Syscalls_GCC.c \
 		$(SDK_PATH)/external/segger_rtt/SEGGER_RTT.c \
 		$(SDK_PATH)/modules/nrfx/mdk/system_nrf52.c \
+		$(SDK_PATH)/modules/nrfx/drivers/src/nrfx_gpiote.c \
 
 C_SOURCE_FILES += \
         $(TOOLS_PATH)/jlink_monitor_mode_debug/JLINK_MONITOR.c \
@@ -118,16 +121,22 @@ ASM_SOURCE_FILES += \
 INC_PATHS += \
 	-I$(SDK_PATH)/components \
 	-I$(SDK_PATH)/components/boards \
-	-I$(SDK_PATH)/components/libraries/util \
+	-I$(SDK_PATH)/components/ble/common \
+	-I$(SDK_PATH)/components/ble/nrf_ble_gatt \
+	-I$(SDK_PATH)/components/ble/nrf_ble_qwr \
+	-I$(SDK_PATH)/components/ble/ble_advertising \
+	-I$(SDK_PATH)/components/ble/peer_manager \
+	-I$(SDK_PATH)/components/drivers_nrf/softdevice/s132/headers \
+	-I$(SDK_PATH)/components/libraries/atomic \
+	-I$(SDK_PATH)/components/libraries/atomic_fifo \
+	-I$(SDK_PATH)/components/libraries/atomic_flags \
+	-I$(SDK_PATH)/components/libraries/balloc \
+	-I$(SDK_PATH)/components/libraries/button \
+	-I$(SDK_PATH)/components/libraries/delay \
 	-I$(SDK_PATH)/components/libraries/log \
 	-I$(SDK_PATH)/components/libraries/memobj \
-	-I$(SDK_PATH)/components/libraries/balloc \
 	-I$(SDK_PATH)/components/libraries/ringbuf \
-	-I$(SDK_PATH)/components/libraries/atomic \
-	-I$(SDK_PATH)/components/libraries/atomic_flags \
-	-I$(SDK_PATH)/components/libraries/atomic_fifo \
-	-I$(SDK_PATH)/components/libraries/delay \
-	-I$(SDK_PATH)/components/drivers_nrf/softdevice/s132/headers \
+	-I$(SDK_PATH)/components/libraries/util \
 	-I$(SDK_PATH)/components/libraries/strerror \
 	-I$(SDK_PATH)/components/libraries/log/src \
 	-I$(SDK_PATH)/components/libraries/util \
@@ -136,21 +145,18 @@ INC_PATHS += \
 	-I$(SDK_PATH)/components/libraries/fstorage \
 	-I$(SDK_PATH)/components/libraries/mutex \
 	-I$(SDK_PATH)/components/libraries/experimental_section_vars \
+	-I$(SDK_PATH)/components/libraries/gpiote \
 	-I$(SDK_PATH)/components/toolchain/cmsis/include \
 	-I$(SDK_PATH)/components/softdevice/s132/headers \
 	-I$(SDK_PATH)/components/softdevice/common \
-	-I$(SDK_PATH)/components/ble/common \
-	-I$(SDK_PATH)/components/ble/nrf_ble_gatt \
-	-I$(SDK_PATH)/components/ble/nrf_ble_qwr \
-	-I$(SDK_PATH)/components/ble/ble_advertising \
-	-I$(SDK_PATH)/components/ble/peer_manager \
+	-I$(SDK_PATH)/external/fprintf \
+	-I$(SDK_PATH)/external/segger_rtt \
+	-I$(SDK_PATH)/integration/nrfx \
+	-I$(SDK_PATH)/integration/nrfx/legacy \
 	-I$(SDK_PATH)/modules/nrfx \
 	-I$(SDK_PATH)/modules/nrfx/drivers/include \
 	-I$(SDK_PATH)/modules/nrfx/hal \
 	-I$(SDK_PATH)/modules/nrfx/mdk \
-	-I$(SDK_PATH)/integration/nrfx \
-	-I$(SDK_PATH)/external/fprintf \
-	-I$(SDK_PATH)/external/segger_rtt \
 	-I$(SRC_PATH) \
 	-I$(SRC_PATH)/app \
 	-I$(SRC_PATH)/ble \

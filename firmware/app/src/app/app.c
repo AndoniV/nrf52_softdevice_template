@@ -8,10 +8,10 @@
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
 #include "nrf_log_default_backends.h"
-
 #include "app_error.h"
 #include "app_timer.h"
-
+#include "app_gpiote.h"
+#include "app_button.h"
 #include "app/app.h"
 #include "ble/app_ble.h"
 
