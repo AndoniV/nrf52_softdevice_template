@@ -10,8 +10,10 @@
 #include "nrf_log_default_backends.h"
 
 #include "app_error.h"
+#include "app_timer.h"
 
 #include "app/app.h"
+#include "ble/app_ble.h"
 
 // DEFINITIONS ****************************************************************/
 
@@ -21,21 +23,26 @@
 
 void app_run(void)
 {
-	uint8_t hex_data[] = { 0x31, 0x32, 0x33, 0xBA, 0x45 };
+	ret_code_t nrf_result;
+	AppResult app_result;
 
- 	ret_code_t nrf_result = NRF_LOG_INIT(NULL);
+ 	nrf_result = NRF_LOG_INIT(NULL);
 	APP_ERROR_CHECK(nrf_result);
 	NRF_LOG_DEFAULT_BACKENDS_INIT();
 
-	NRF_LOG_INFO("[APP] Info");
-	NRF_LOG_DEBUG("[APP] Debug");
-	NRF_LOG_WARNING("[APP] Warning");
-	NRF_LOG_ERROR("[APP] Error");
-	NRF_LOG_HEXDUMP_DEBUG(hex_data, sizeof(hex_data));
-	NRF_LOG_RAW_INFO("[APP] Raw Info\n");
-	NRF_LOG_RAW_HEXDUMP_INFO("[APP] Raw Info", 14);
+    NRF_LOG_INFO("********************************************************************************");
+    NRF_LOG_INFO("Copyright (c) Glue Home Ltd, 2019. All rights reserved");
+    NRF_LOG_INFO("********************************************************************************");
+    NRF_LOG_FLUSH();
 
-	NRF_LOG_FLUSH();	
+    // Initialise NRF modules
+    nrf_result = app_timer_init();
+    APP_ERROR_CHECK(nrf_result);
+
+	app_result = app_ble_init();
+	APP_ERROR_CHECK((ret_code_t)app_result);
+
+	app_ble_advertising_start();
 
 	while (1)
 	{
