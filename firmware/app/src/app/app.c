@@ -30,7 +30,7 @@ void app_run(void)
 	NRF_LOG_DEFAULT_BACKENDS_INIT();
 
     NRF_LOG_INFO("********************************************************************************");
-    NRF_LOG_INFO("Copyright (c) Glue Home Ltd, 2019. All rights reserved");
+    NRF_LOG_INFO("NRF52 Softdevice Template Project");
     NRF_LOG_INFO("********************************************************************************");
     NRF_LOG_FLUSH();
 
