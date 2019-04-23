@@ -3,7 +3,7 @@ SDK_PATH          := ../nrf5_sdk
 PROJECT_PATH      := .
 SRC_PATH          := $(PROJECT_PATH)/src
 OUTPUT_FILENAME   := nrf52832_template
-LINKER_SCRIPT     := generic_gcc_nrf52.ld
+LINKER_SCRIPT     := nrf52.ld
 GNU_PREFIX        := arm-none-eabi
 SDK_CONFIG_FILE   := $(SRC_PATH)/sdk_config.h
 CMSIS_CONFIG_TOOL := $(SDK_PATH)/external_tools/cmsisconfig/CMSIS_Configuration_Wizard.jar
@@ -48,8 +48,24 @@ remduplicates = $(strip $(if $1,$(firstword $1) $(call remduplicates,$(filter-ou
 
 # C source files
 C_SOURCE_FILES += \
+		$(SDK_PATH)/components/boards/boards.c \
+		$(SDK_PATH)/components/libraries/log/src/nrf_log_frontend.c \
+		$(SDK_PATH)/components/libraries/log/src/nrf_log_str_formatter.c \
+		$(SDK_PATH)/components/libraries/log/src/nrf_log_default_backends.c \
+		$(SDK_PATH)/components/libraries/log/src/nrf_log_backend_rtt.c \
+		$(SDK_PATH)/components/libraries/log/src/nrf_log_backend_serial.c \
+		$(SDK_PATH)/components/libraries/util/app_error.c \
+		$(SDK_PATH)/components/libraries/util/app_error_handler_gcc.c \
+		$(SDK_PATH)/components/libraries/util/app_error_weak.c \
+		$(SDK_PATH)/components/libraries/util/app_util_platform.c \
+		$(SDK_PATH)/components/libraries/util/nrf_assert.c \
+		$(SDK_PATH)/components/libraries/atomic/nrf_atomic.c \
+		$(SDK_PATH)/components/libraries/balloc/nrf_balloc.c \
 		$(SDK_PATH)/external/fprintf/nrf_fprintf_format.c \
 		$(SDK_PATH)/external/fprintf/nrf_fprintf.c \
+		$(SDK_PATH)/components/libraries/memobj/nrf_memobj.c \
+		$(SDK_PATH)/components/libraries/ringbuf/nrf_ringbuf.c \
+		$(SDK_PATH)/components/libraries/strerror/nrf_strerror.c \
 		$(SDK_PATH)/external/segger_rtt/SEGGER_RTT_printf.c \
 		$(SDK_PATH)/external/segger_rtt/SEGGER_RTT_Syscalls_GCC.c \
 		$(SDK_PATH)/external/segger_rtt/SEGGER_RTT.c \
@@ -60,6 +76,7 @@ C_SOURCE_FILES += \
 
 C_SOURCE_FILES += \
 		$(SRC_PATH)/main.c \
+		$(SRC_PATH)/app/app.c \
 
 # Remove unwanted source files
 # C_SOURCE_FILES := $(filter-out $(SDK_PATH)/external/mbedtls/library/asn1write.c, $(C_SOURCE_FILES))
@@ -72,15 +89,30 @@ ASM_SOURCE_FILES += \
 
 # Includes paths common to all targets
 INC_PATHS += \
-	-I$(SDK_PATH)/components/libraries/util \
 	-I$(SDK_PATH)/components \
+	-I$(SDK_PATH)/components/boards \
+	-I$(SDK_PATH)/components/libraries/util \
+	-I$(SDK_PATH)/components/libraries/log \
+	-I$(SDK_PATH)/components/libraries/memobj \
+	-I$(SDK_PATH)/components/libraries/balloc \
+	-I$(SDK_PATH)/components/libraries/ringbuf \
+	-I$(SDK_PATH)/components/libraries/atomic \
+	-I$(SDK_PATH)/components/libraries/delay \
 	-I$(SDK_PATH)/components/drivers_nrf/nrf_soc_nosd \
+	-I$(SDK_PATH)/components/libraries/strerror \
+	-I$(SDK_PATH)/components/libraries/log/src \
 	-I$(SDK_PATH)/components/toolchain/cmsis/include \
+	-I$(SDK_PATH)/components/libraries/experimental_section_vars \
 	-I$(SDK_PATH)/modules/nrfx \
 	-I$(SDK_PATH)/modules/nrfx/drivers/include \
 	-I$(SDK_PATH)/modules/nrfx/hal \
 	-I$(SDK_PATH)/modules/nrfx/mdk \
+	-I$(SDK_PATH)/integration/nrfx \
+	-I$(SDK_PATH)/external/fprintf \
+	-I$(SDK_PATH)/external/segger_rtt \
 	-I$(SRC_PATH) \
+	-I$(SRC_PATH)/app \
+	-I$(SRC_PATH)/hal \
 
 OBJECT_DIRECTORY = build
 LISTING_DIRECTORY = $(OBJECT_DIRECTORY)
@@ -105,21 +137,21 @@ OBJECTS = $(C_OBJECTS) $(ASM_OBJECTS)
 # Compiler flags
 CFLAGS += -D__HEAP_SIZE=8192
 CFLAGS += -D__STACK_SIZE=8192
-CFLAGS += -DBL_SETTINGS_ACCESS_ONLY
+# CFLAGS += -DBL_SETTINGS_ACCESS_ONLY
 CFLAGS += -DBOARD_PCA10040
 CFLAGS += -DCONFIG_GPIO_AS_PINRESET
 CFLAGS += -DFLOAT_ABI_SOFT
 # CFLAGS += -DMBEDTLS_CONFIG_FILE=\"$(MAKEFILE_PATH)src/mbedtls_config.h\"
-CFLAGS += -DNRF_CRYPTO_MAX_INSTANCE_COUNT=1
-CFLAGS += -DNRF_DFU_SVCI_ENABLED
-CFLAGS += -DNRF_DFU_TRANSPORT_BLE=1
-CFLAGS += -DNRF_SD_BLE_API_VERSION=6
+# CFLAGS += -DNRF_CRYPTO_MAX_INSTANCE_COUNT=1
+# CFLAGS += -DNRF_DFU_SVCI_ENABLED
+# CFLAGS += -DNRF_DFU_TRANSPORT_BLE=1
+# CFLAGS += -DNRF_SD_BLE_API_VERSION=6
 CFLAGS += -DNRF52
 CFLAGS += -DNRF52_PAN_74
 CFLAGS += -DNRF52832_XXAA
 CFLAGS += -DPB_FIELD_16BIT
-CFLAGS += -DS132
-CFLAGS += -DSOFTDEVICE_PRESENT
+# CFLAGS += -DS132
+# CFLAGS += -DSOFTDEVICE_PRESENT
 CFLAGS += -DSWI_DISABLE0
 CFLAGS += -ffunction-sections -fdata-sections -fno-strict-aliasing
 CFLAGS += -fno-builtin -fshort-enums
@@ -130,7 +162,6 @@ CFLAGS += -Wall -Wno-unused-variable
 
 # Linker flags
 LDFLAGS += --specs=nano.specs
-LDFLAGS += -L$(LIBSODIUM_PATH)/lib/cortexm
 LDFLAGS += -mcpu=cortex-m4
 LDFLAGS += -mfloat-abi=soft
 LDFLAGS += -mthumb -mabi=aapcs -L$(SDK_PATH)/modules/nrfx/mdk -T$(LINKER_SCRIPT)
@@ -140,19 +171,19 @@ LDFLAGS += -Xlinker -Map=$(LISTING_DIRECTORY)/$(OUTPUT_FILENAME).map
 # Assembler flags
 ASMFLAGS += -D__HEAP_SIZE=8192
 ASMFLAGS += -D__STACK_SIZE=8192
-ASMFLAGS += -DBL_SETTINGS_ACCESS_ONLY
+# ASMFLAGS += -DBL_SETTINGS_ACCESS_ONLY
 ASMFLAGS += -DBOARD_PCA10040
 ASMFLAGS += -DCONFIG_GPIO_AS_PINRESET
 ASMFLAGS += -DFLOAT_ABI_SOFT
-ASMFLAGS += -DNRF_CRYPTO_MAX_INSTANCE_COUNT=1
-ASMFLAGS += -DNRF_DFU_SVCI_ENABLED
-ASMFLAGS += -DNRF_DFU_TRANSPORT_BLE=1
-ASMFLAGS += -DNRF_SD_BLE_API_VERSION=6
+# ASMFLAGS += -DNRF_CRYPTO_MAX_INSTANCE_COUNT=1
+# ASMFLAGS += -DNRF_DFU_SVCI_ENABLED
+# ASMFLAGS += -DNRF_DFU_TRANSPORT_BLE=1
+# ASMFLAGS += -DNRF_SD_BLE_API_VERSION=6
 ASMFLAGS += -DNRF52
 ASMFLAGS += -DNRF52_PAN_74
 ASMFLAGS += -DNRF52832_XXAA
-ASMFLAGS += -DS132
-ASMFLAGS += -DSOFTDEVICE_PRESENT
+# ASMFLAGS += -DS132
+# ASMFLAGS += -DSOFTDEVICE_PRESENT
 ASMFLAGS += -DSWI_DISABLE0
 ASMFLAGS += -g3
 ASMFLAGS += -mcpu=cortex-m4
@@ -182,6 +213,15 @@ debug: CFLAGS += -DNRF_LOG_USES_RTT=1
 debug: CFLAGS += -DMMD=1
 debug: CFLAGS += -DDEBUG_MONITOR_MODE=1
 debug: $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).out
+
+# Release
+.PHONY: release
+release: clean
+release: ASMFLAGS += -DNDEBUG -O2
+release: CFLAGS += -DNDEBUG -O2
+release: CFLAGS += -DNRF_LOG_ENABLED=0
+release: LDFLAGS += -s
+release: $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).out
 
 # Create build directories
 $(BUILD_DIRECTORIES):
@@ -221,6 +261,17 @@ echosize:
 	-@echo ''
 	$(NO_ECHO)$(SIZE) $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).out
 	-@echo ''
+
+# Flash firmware
+.PHONY: flash
+flash:
+	@echo FLASHING FIRMWARE: $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).hex
+	nrfjprog --program $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).hex -f nrf52 --sectorerase
+	nrfjprog --reset -f nrf52
+
+# Erase nRF52
+erase:
+	nrfjprog -f nrf52 --eraseall
 
 # Run the SDK configuration tool
 sdk_config:

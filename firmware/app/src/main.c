@@ -1,5 +1,4 @@
 /***************************************************************************//**
- @copyright © Glue Home Ltd, 2019. All rights reserved
  @author    A Villarreal
  @date      18/04/19
  @file      main.c
@@ -12,11 +11,14 @@
 
 // IMPLEMENTATION *************************************************************/
 
+#include "app/app.h"
+
 /**
  * Firmware entry point
  * @return	Exit code
  */
 int main(void)
 {
+	app_run();
 	return 0;
 }
